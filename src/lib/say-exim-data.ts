@@ -1,3 +1,5 @@
+import warehouseImage from "@/assets/say-exim-warehouse.jpg";
+
 export type Product = {
   id: string;
   name: string;
@@ -15,7 +17,7 @@ export type SiteData = {
   gallery: { id: string; title: string; category: string; image: string; alt: string }[];
   content: { heroTitle: string; heroDescription: string; aboutTitle: string; aboutDescription: string; footerCredit: string; businessName: string };
   contact: { phone: string; email: string; address: string };
-  enquiries: { id: string; name: string; company: string; email: string; phone: string; product: string; message: string; status: string; date: string }[];
+  enquiries: { id: string; name: string; company: string; email: string; phone: string; country?: string; quantity?: string; product: string; message: string; status: string; date: string }[];
 };
 
 const photo = (id: string, n: number) => `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=1100&q=82&sig=${n}`;
@@ -86,7 +88,7 @@ export const initialSiteData: SiteData = {
     { id: "trade", name: "Import & Export Coordination", description: "Trade coordination for wholesale import and export enquiries, from initial discussion to shipment planning.", image: photo("1494412651409-8963ce7935a7", 32), visible: true },
     { id: "documentation", name: "Documentation Support", description: "Discuss the documentation requirements relevant to your product, shipment and destination.", image: photo("1586528116311-ad8dd3c8310d", 33), visible: true },
   ],
-  gallery: galleryPhotos.map((id, i) => ({ id: `g${i + 1}`, title: `Trade & supply image ${i + 1}`, category: ["Products", "Warehouse", "Trading Operations", "Logistics", "Business Meetings"][i % 5], image: photo(id, 100 + i), alt: `Import-export and wholesale trading visual ${i + 1}` })),
+  gallery: galleryPhotos.map((id, i) => ({ id: `g${i + 1}`, title: `Trade & supply image ${i + 1}`, category: ["Products", "Warehouse", "Trading Operations", "Logistics", "Business Meetings"][i % 5], image: i === 0 ? warehouseImage.split("?")[0] : photo(id, 100 + i), alt: `Import-export and wholesale trading visual ${i + 1}` })),
   content: {
     heroTitle: "Connecting Markets. Delivering Global Trade Solutions.",
     heroDescription: "Your partner for global sourcing, international trade and professional import-export coordination.",
@@ -98,3 +100,15 @@ export const initialSiteData: SiteData = {
   contact: { phone: "+91 98765 43210", email: "info@sayeximtraders.com", address: "58/3B Azad Nagar, Wanwadi, SRPF, Pune City, Maharashtra, India – 411022" },
   enquiries: [],
 };
+// Merge older browser saves without losing admin changes, upgrading only the original wrong image.
+export function restoreSiteData(saved: Partial<SiteData>): SiteData {
+  return {
+    ...initialSiteData, ...saved,
+    content: { ...initialSiteData.content, ...saved.content },
+    contact: { ...initialSiteData.contact, ...saved.contact },
+    gallery: (Array.isArray(saved.gallery) ? saved.gallery : initialSiteData.gallery).map((item) =>
+      item.id === "g1" && item.image.includes("1566576912321-d58ddd7a6088")
+        ? { ...item, image: initialSiteData.gallery[0]?.image ?? warehouseImage.split("?")[0], alt: "Organized warehouse with shipping cartons and a forklift" }
+        : item),
+  };
+}
