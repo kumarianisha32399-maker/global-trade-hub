@@ -1,3 +1,6 @@
+import kitchenImage from "@/assets/kitchen-essentials.jpg";
+import bagsImage from "@/assets/paper-bags.jpg";
+import tilesImage from "@/assets/floor-tiles.jpg";
 import warehouseImage from "@/assets/say-exim-warehouse.jpg";
 
 export type Product = {
@@ -20,7 +23,17 @@ export type SiteData = {
   enquiries: { id: string; name: string; company: string; email: string; phone: string; country?: string; quantity?: string; product: string; message: string; status: string; date: string }[];
 };
 
-const photo = (id: string, n: number) => `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=1100&q=82&sig=${n}`;
+const replacementImages: Record<string, string> = {
+  "1593510987046-1f8fcfc512a4": kitchenImage.replace(/\?.*$/, ""),
+  "1580048915913-4f3b1629dd98": bagsImage.replace(/\?.*$/, ""),
+  "1561414926-d5be72be9f30": tilesImage.replace(/\?.*$/, ""),
+  "1586528116493-3a4c8a48aaa8": warehouseImage.replace(/\?.*$/, ""),
+};
+const photo = (id: string, n: number) => replacementImages[id] ?? `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=1100&q=82&sig=${n}`;
+const repairImage = (image: string) => {
+  const replacement = Object.entries(replacementImages).find(([id]) => image.includes(`images.unsplash.com/photo-${id}`));
+  return replacement?.[1] ?? image;
+};
 
 const categoryList = [
   { id: "industrial-supplies", name: "Industrial Supplies", description: "Heavy-duty industrial equipment, tools and machinery parts.", image: photo("1565793298595-6a879b1d9492", 1) },
@@ -106,9 +119,12 @@ export function restoreSiteData(saved: Partial<SiteData>): SiteData {
     ...initialSiteData, ...saved,
     content: { ...initialSiteData.content, ...saved.content },
     contact: { ...initialSiteData.contact, ...saved.contact },
+    products: (saved.products ?? initialSiteData.products).map((item) => ({ ...item, image: repairImage(item.image) })),
+    categories: (saved.categories ?? initialSiteData.categories).map((item) => ({ ...item, image: repairImage(item.image) })),
+    services: (saved.services ?? initialSiteData.services).map((item) => ({ ...item, image: repairImage(item.image) })),
     gallery: (Array.isArray(saved.gallery) ? saved.gallery : initialSiteData.gallery).map((item) =>
       item.id === "g1" && item.image.includes("1566576912321-d58ddd7a6088")
         ? { ...item, image: initialSiteData.gallery[0]?.image ?? warehouseImage.replace(/\?.*$/, ""), alt: "Organized warehouse with shipping cartons and a forklift" }
-        : item),
+        : { ...item, image: repairImage(item.image) }),
   };
 }
