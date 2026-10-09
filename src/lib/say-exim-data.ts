@@ -88,7 +88,7 @@ export const initialSiteData: SiteData = {
     { id: "trade", name: "Import & Export Coordination", description: "Trade coordination for wholesale import and export enquiries, from initial discussion to shipment planning.", image: photo("1494412651409-8963ce7935a7", 32), visible: true },
     { id: "documentation", name: "Documentation Support", description: "Discuss the documentation requirements relevant to your product, shipment and destination.", image: photo("1586528116311-ad8dd3c8310d", 33), visible: true },
   ],
-  gallery: galleryPhotos.map((id, i) => ({ id: `g${i + 1}`, title: `Trade & supply image ${i + 1}`, category: ["Products", "Warehouse", "Trading Operations", "Logistics", "Business Meetings"][i % 5], image: i === 0 ? warehouseImage.split("?")[0] : photo(id, 100 + i), alt: `Import-export and wholesale trading visual ${i + 1}` })),
+  gallery: galleryPhotos.map((id, i) => ({ id: `g${i + 1}`, title: `Trade & supply image ${i + 1}`, category: ["Products", "Warehouse", "Trading Operations", "Logistics", "Business Meetings"][i % 5] ?? "Products", image: i === 0 ? warehouseImage.replace(/\?.*$/, "") : photo(id, 100 + i), alt: `Import-export and wholesale trading visual ${i + 1}` })),
   content: {
     heroTitle: "Connecting Markets. Delivering Global Trade Solutions.",
     heroDescription: "Your partner for global sourcing, international trade and professional import-export coordination.",
@@ -108,7 +108,7 @@ export function restoreSiteData(saved: Partial<SiteData>): SiteData {
     contact: { ...initialSiteData.contact, ...saved.contact },
     gallery: (Array.isArray(saved.gallery) ? saved.gallery : initialSiteData.gallery).map((item) =>
       item.id === "g1" && item.image.includes("1566576912321-d58ddd7a6088")
-        ? { ...item, image: initialSiteData.gallery[0]?.image ?? warehouseImage.split("?")[0], alt: "Organized warehouse with shipping cartons and a forklift" }
+        ? { ...item, image: initialSiteData.gallery[0]?.image ?? warehouseImage.replace(/\?.*$/, ""), alt: "Organized warehouse with shipping cartons and a forklift" }
         : item),
   };
 }
