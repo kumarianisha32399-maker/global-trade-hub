@@ -10,5 +10,6 @@
 <!-- LOVABLE:END -->
 
 - Preserve the imported SAY EXIM pages and design; extend existing components rather than replacing the website.
+- Keep public page banner photography in the shared PageBanner component with catalogue-specific imagery, so headings remain consistently readable without duplicating page layouts.
 - Keep the platform TanStack routing and SSR shell while the demo uses browser-local storage; this preserves supported refresh/navigation behavior without a backend.
 - Initialize render state with deterministic sample data and restore browser saves after hydration; product URLs come from router state, not window during render.

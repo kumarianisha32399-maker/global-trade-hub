@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState, type FormEvent } from "react";
 import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import importedHeroImage from "@/assets/say-exim-port-hero.jpg";
+import warehouseImage from "@/assets/say-exim-warehouse.jpg";
 import { adminSessionKey, initialSiteData, restoreSiteData, storageKey, type Product, type SiteData } from "@/lib/say-exim-data";
 
 const heroImage = importedHeroImage.replace(/\?.*$/, "");
@@ -73,7 +74,10 @@ function HomePage({ data, onQuote, onEnquiry }: { data: SiteData; onQuote: (name
     <section className="contact-preview section-space"><div className="site-container contact-preview-grid"><div><p className="eyebrow">CONTACT SAY EXIM TRADERS</p><h2>Tell us what your business needs.</h2><p className="section-copy">We welcome wholesale, sourcing and international trade enquiries.</p><div className="contact-details"><a href={`tel:${data.contact.phone.replaceAll(" ", "")}`}>{data.contact.phone}</a><a href={`mailto:${data.contact.email}`}>{data.contact.email}</a><span>{data.contact.address}</span></div></div><ContactForm data={data} onSubmit={onEnquiry} /></div></section></>;
 }
 
-function PageBanner({ eyebrow, title, copy }: { eyebrow: string; title: string; copy: string }) { return <section className="page-banner"><div className="site-container"><p className="eyebrow eyebrow-light">{eyebrow}</p><h1>{title}</h1><p>{copy}</p></div></section>; }
+function PageBanner({ eyebrow, title, copy }: { eyebrow: string; title: string; copy: string }) {
+  const isCatalogue = eyebrow === "WHOLESALE CATALOGUE";
+  return <section className="page-banner"><img className="page-banner-image" src={isCatalogue ? warehouseImage : heroImage} alt={isCatalogue ? "Warehouse shelves and goods prepared for wholesale distribution" : "Container ship and cranes at an international trading port"} width={isCatalogue ? 1200 : 1792} height={isCatalogue ? 1000 : 1024} onError={iconFallback} /><div className="page-banner-shade" /><div className="site-container page-banner-content"><p className="eyebrow eyebrow-light">{eyebrow}</p><h1>{title}</h1><p>{copy}</p></div></section>;
+}
 
 function ProductListing({ data, onQuote }: { data: SiteData; onQuote: (name?: string) => void }) {
   const [filter, setFilter] = useState("All categories");
